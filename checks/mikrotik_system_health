@@ -24,10 +24,6 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-# This Checks creates one PNP Graph for each Processor.
-# Just place it in your local/share/check_mk/checks
-
-
 def inventory_mikrotik_system_health(info):
     if info:
         return [('', None)]
