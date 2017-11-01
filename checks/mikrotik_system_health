@@ -32,7 +32,7 @@ def inventory_mikrotik_system_health(info):
 
 
 def check_mikrotik_system_health(item, _no_params, info):
-    for voltage, temp, cputemp, powercons, current, cpufreq in info:
+    for voltage, temp, cputemp, powercons, current, cpufreq, psu1, psu2 in info:
         perfdata = []
         summary = ''
         if voltage:
@@ -55,6 +55,18 @@ def check_mikrotik_system_health(item, _no_params, info):
 
         if summary.endswith(', '):
             summary = summary[0:-2]
+        
+        # Check if dual ps installed, if not no poing in doing a check on single PSU :)
+
+        if psu2:
+            if int(psu1) == 1 and int(psu2) == 1:
+                summary += ',2/2 PS - OK'
+            elif int(psu1) == 1:
+                summary += ',PSU 2 - CRIT'
+                return (2, summary, perfdata)
+            else:
+                summary += ',PSU 1 - CRIT'
+                return (2, summary, perfdata)
 
         return (0, summary, perfdata)
     return (3, 'Invalid data', [])
@@ -75,6 +87,8 @@ snmp_info['mikrotik_system_health'] = (
         '12.0',  # power consumption
         '13.0',  # current
         '14.0',  # cpu frequency
+        '15.0',  # PSU 1
+        '16.0',  # PSU 2
     ]
 )
 
